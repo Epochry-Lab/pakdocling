@@ -22,8 +22,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: |
-          pip install -e ".[dev]"
+        run: pip install -e ".[dev]"
 
       - name: Lint
         run: |
@@ -36,26 +35,43 @@ jobs:
       - name: Test
         run: pytest --cov=pakdocling --cov-report=xml
 
-  publish:
+  # --- Dry-run build on every push to main ---
+  build:
     needs: test
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build
+      - run: python -m build
+      - name: Check package
+        run: |
+          pip install twine
+          twine check dist/*
+
+  # --- Publish only on tags, with manual approval ---
+  publish:
+    needs: [test, build]
+    runs-on: ubuntu-latest
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pakdocling
+    
+    permissions:
+      id-token: write  # Required for trusted publishing
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
-      - name: Install build tools
-        run: pip install build twine
-
-      - name: Build
-        run: python -m build
-        
+      - run: pip install build
+      - run: python -m build
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          environment: pypi
