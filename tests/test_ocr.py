@@ -1,6 +1,7 @@
 """Unit tests for OCR engines interface and MockOCREngine."""
 
 import numpy as np
+
 from pakdocling.ocr import MockOCREngine, OCRResultItem
 
 

@@ -2,6 +2,7 @@
 
 import os
 from typing import Any, Union
+
 import cv2
 import numpy as np
 from PIL import Image
@@ -47,7 +48,9 @@ class ImagePreprocessor:
         return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     @staticmethod
-    def enhance_contrast(gray_img: np.ndarray, clip_limit: float = 2.0, tile_grid_size: tuple[int, int] = (8, 8)) -> np.ndarray:
+    def enhance_contrast(
+        gray_img: np.ndarray, clip_limit: float = 2.0, tile_grid_size: tuple[int, int] = (8, 8)
+    ) -> np.ndarray:
         """Apply Contrast Limited Adaptive Histogram Equalization (CLAHE)."""
         clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=tile_grid_size)
         return clahe.apply(gray_img)
@@ -96,7 +99,9 @@ class ImagePreprocessor:
         (h, w) = img.shape[:2]
         center = (w // 2, h // 2)
         m = cv2.getRotationMatrix2D(center, angle, 1.0)
-        rotated = cv2.warpAffine(img, m, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+        rotated = cv2.warpAffine(
+            img, m, (w, h), flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE
+        )
         return rotated
 
     def preprocess(

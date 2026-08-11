@@ -1,15 +1,13 @@
 """Command Line Interface for pakdocling using Typer."""
 
-import json
 from pathlib import Path
 from typing import Optional
+
 import typer
-from rich import print as rprint
 from rich.console import Console
 from rich.panel import Panel
 
 from pakdocling import __version__
-from pakdocling.models.schema import DocumentType
 from pakdocling.pipeline import DocumentPipeline
 
 app = typer.Typer(

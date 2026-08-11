@@ -2,6 +2,7 @@
 
 import re
 from typing import Union
+
 from pakdocling.extractors.base import BaseExtractor
 from pakdocling.models.schema import CNICData, CNICVariant, Gender
 from pakdocling.ocr.engine import OCRResultItem
@@ -50,7 +51,9 @@ class CNICExtractor(BaseExtractor):
             return CNICVariant.OLD_GREEN
         return CNICVariant.NEW_BLUE
 
-    def _extract_dates(self, lines: list[str]) -> tuple[Union[str, None], Union[str, None], Union[str, None]]:
+    def _extract_dates(
+        self, lines: list[str]
+    ) -> tuple[Union[str, None], Union[str, None], Union[str, None]]:
         dob: Union[str, None] = None
         issue: Union[str, None] = None
         expiry: Union[str, None] = None
@@ -150,7 +153,11 @@ class CNICExtractor(BaseExtractor):
         return name, father_name, husband_name, country
 
     def extract(self, items: list[OCRResultItem], raw_text: str) -> CNICData:
-        lines = [item.text for item in items] if items else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        lines = (
+            [item.text for item in items]
+            if items
+            else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        )
 
         cnic_num = self._extract_cnic_number(raw_text)
         variant = self._detect_variant(raw_text)

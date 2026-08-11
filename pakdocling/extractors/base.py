@@ -1,8 +1,9 @@
 """Base Extractor interface for document parsers."""
 
 from abc import ABC, abstractmethod
-from typing import Any
+
 from pydantic import BaseModel
+
 from pakdocling.ocr.engine import OCRResultItem
 
 

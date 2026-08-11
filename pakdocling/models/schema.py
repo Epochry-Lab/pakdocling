@@ -2,6 +2,7 @@
 
 from enum import Enum
 from typing import Any, Union
+
 from pydantic import BaseModel, Field
 
 
@@ -40,61 +41,96 @@ class CNICData(BaseModel):
         description="13-digit CNIC number in standard XXXXX-XXXXXXX-X format",
     )
     variant: CNICVariant = Field(
-        default=CNICVariant.UNKNOWN, description="CNIC physical card format (old green / new blue smart)"
+        default=CNICVariant.UNKNOWN,
+        description="CNIC physical card format (old green / new blue smart)",
     )
     full_name: Union[str, None] = Field(default=None, description="Cardholder full name")
     father_name: Union[str, None] = Field(default=None, description="Father's full name")
-    husband_name: Union[str, None] = Field(default=None, description="Husband's full name if applicable")
+    husband_name: Union[str, None] = Field(
+        default=None, description="Husband's full name if applicable"
+    )
     gender: Gender = Field(default=Gender.UNKNOWN, description="Gender of cardholder")
-    country_of_stay: Union[str, None] = Field(default=None, description="Country of stay / residence")
-    date_of_birth: Union[str, None] = Field(default=None, description="Date of birth (DD.MM.YYYY format)")
-    date_of_issue: Union[str, None] = Field(default=None, description="Date of issue (DD.MM.YYYY format)")
+    country_of_stay: Union[str, None] = Field(
+        default=None, description="Country of stay / residence"
+    )
+    date_of_birth: Union[str, None] = Field(
+        default=None, description="Date of birth (DD.MM.YYYY format)"
+    )
+    date_of_issue: Union[str, None] = Field(
+        default=None, description="Date of issue (DD.MM.YYYY format)"
+    )
     date_of_expiry: Union[str, None] = Field(
         default=None, description="Date of expiry (DD.MM.YYYY or Lifetime)"
     )
-    confidence: float = Field(default=0.0, description="Overall field extraction confidence score (0-1)")
+    confidence: float = Field(
+        default=0.0, description="Overall field extraction confidence score (0-1)"
+    )
     raw_text: Union[str, None] = Field(default=None, description="Raw extracted OCR text lines")
 
 
 class MatricCertificateData(BaseModel):
     """Structured data model for Matriculation (SSC / 10th Grade) Certificate."""
 
-    roll_number: Union[str, None] = Field(default=None, description="Candidate Examination Roll Number")
-    registration_number: Union[str, None] = Field(default=None, description="Board Registration Number")
+    roll_number: Union[str, None] = Field(
+        default=None, description="Candidate Examination Roll Number"
+    )
+    registration_number: Union[str, None] = Field(
+        default=None, description="Board Registration Number"
+    )
     student_name: Union[str, None] = Field(default=None, description="Student Full Name")
     father_name: Union[str, None] = Field(default=None, description="Father Full Name")
     board: Union[str, None] = Field(
         default=None, description="Board of Intermediate and Secondary Education (e.g. BISE Lahore)"
     )
-    passing_year: Union[int, None] = Field(default=None, description="Year of passing / examination")
+    passing_year: Union[int, None] = Field(
+        default=None, description="Year of passing / examination"
+    )
     total_marks: Union[float, None] = Field(default=None, description="Total maximum marks")
     obtained_marks: Union[float, None] = Field(default=None, description="Total marks obtained")
-    percentage: Union[float, None] = Field(default=None, description="Calculated or stated percentage")
+    percentage: Union[float, None] = Field(
+        default=None, description="Calculated or stated percentage"
+    )
     grade: Union[str, None] = Field(default=None, description="Assigned grade (e.g. A+, A, B, C)")
-    group: Union[str, None] = Field(default=None, description="Study group (e.g. Science, Humanities)")
-    confidence: float = Field(default=0.0, description="Overall field extraction confidence score (0-1)")
+    group: Union[str, None] = Field(
+        default=None, description="Study group (e.g. Science, Humanities)"
+    )
+    confidence: float = Field(
+        default=0.0, description="Overall field extraction confidence score (0-1)"
+    )
     raw_text: Union[str, None] = Field(default=None, description="Raw extracted OCR text lines")
 
 
 class IntermediateCertificateData(BaseModel):
     """Structured data model for Intermediate (HSSC / 12th Grade) Certificate."""
 
-    roll_number: Union[str, None] = Field(default=None, description="Candidate Examination Roll Number")
-    registration_number: Union[str, None] = Field(default=None, description="Board Registration Number")
+    roll_number: Union[str, None] = Field(
+        default=None, description="Candidate Examination Roll Number"
+    )
+    registration_number: Union[str, None] = Field(
+        default=None, description="Board Registration Number"
+    )
     student_name: Union[str, None] = Field(default=None, description="Student Full Name")
     father_name: Union[str, None] = Field(default=None, description="Father Full Name")
     board: Union[str, None] = Field(
-        default=None, description="Board of Intermediate and Secondary Education (e.g. BISE Rawalpindi)"
+        default=None,
+        description="Board of Intermediate and Secondary Education (e.g. BISE Rawalpindi)",
     )
-    passing_year: Union[int, None] = Field(default=None, description="Year of passing / examination")
+    passing_year: Union[int, None] = Field(
+        default=None, description="Year of passing / examination"
+    )
     total_marks: Union[float, None] = Field(default=None, description="Total maximum marks")
     obtained_marks: Union[float, None] = Field(default=None, description="Total marks obtained")
-    percentage: Union[float, None] = Field(default=None, description="Calculated or stated percentage")
+    percentage: Union[float, None] = Field(
+        default=None, description="Calculated or stated percentage"
+    )
     grade: Union[str, None] = Field(default=None, description="Assigned grade (e.g. A+, A, B, C)")
     group: Union[str, None] = Field(
-        default=None, description="Study group (e.g. Pre-Engineering, Pre-Medical, ICS, General Science)"
+        default=None,
+        description="Study group (e.g. Pre-Engineering, Pre-Medical, ICS, General Science)",
     )
-    confidence: float = Field(default=0.0, description="Overall field extraction confidence score (0-1)")
+    confidence: float = Field(
+        default=0.0, description="Overall field extraction confidence score (0-1)"
+    )
     raw_text: Union[str, None] = Field(default=None, description="Raw extracted OCR text lines")
 
 
@@ -103,20 +139,33 @@ class UniversityDegreeData(BaseModel):
 
     student_name: Union[str, None] = Field(default=None, description="Student Full Name")
     father_name: Union[str, None] = Field(default=None, description="Father Full Name")
-    roll_number: Union[str, None] = Field(default=None, description="Student Roll Number / Registration ID")
-    registration_number: Union[str, None] = Field(default=None, description="University Registration Number")
+    roll_number: Union[str, None] = Field(
+        default=None, description="Student Roll Number / Registration ID"
+    )
+    registration_number: Union[str, None] = Field(
+        default=None, description="University Registration Number"
+    )
     degree_title: Union[str, None] = Field(
-        default=None, description="Degree Award Title (e.g. Bachelor of Science in Computer Science)"
+        default=None,
+        description="Degree Award Title (e.g. Bachelor of Science in Computer Science)",
     )
     major: Union[str, None] = Field(default=None, description="Major / Discipline")
     university_name: Union[str, None] = Field(default=None, description="Issuing University Name")
-    graduation_year: Union[int, None] = Field(default=None, description="Graduation / Completion Year")
+    graduation_year: Union[int, None] = Field(
+        default=None, description="Graduation / Completion Year"
+    )
     award_date: Union[str, None] = Field(default=None, description="Official degree conferral date")
-    cgpa: Union[float, None] = Field(default=None, description="Cumulative Grade Point Average (CGPA)")
+    cgpa: Union[float, None] = Field(
+        default=None, description="Cumulative Grade Point Average (CGPA)"
+    )
     max_cgpa: Union[float, None] = Field(default=4.0, description="Maximum scale CGPA")
     total_marks: Union[float, None] = Field(default=None, description="Total Marks if applicable")
-    obtained_marks: Union[float, None] = Field(default=None, description="Obtained Marks if applicable")
-    confidence: float = Field(default=0.0, description="Overall field extraction confidence score (0-1)")
+    obtained_marks: Union[float, None] = Field(
+        default=None, description="Obtained Marks if applicable"
+    )
+    confidence: float = Field(
+        default=0.0, description="Overall field extraction confidence score (0-1)"
+    )
     raw_text: Union[str, None] = Field(default=None, description="Raw extracted OCR text lines")
 
 
@@ -140,5 +189,7 @@ class ExtractionResult(BaseModel):
         UniversityDegreeData,
         dict[str, Any],
     ] = Field(description="Extracted structured data model or dictionary")
-    errors: list[str] = Field(default_factory=list, description="List of warnings or extraction errors")
+    errors: list[str] = Field(
+        default_factory=list, description="List of warnings or extraction errors"
+    )
     processing_time_ms: float = Field(default=0.0, description="Processing time in milliseconds")

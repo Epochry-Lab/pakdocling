@@ -1,8 +1,8 @@
 """Unit tests for OpenCV image preprocessing module."""
 
 import numpy as np
-import pytest
 from PIL import Image
+
 from pakdocling.preprocessing import ImagePreprocessor
 
 

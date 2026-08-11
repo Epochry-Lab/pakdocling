@@ -1,13 +1,19 @@
 """Unit tests for DocumentPipeline with MockOCREngine."""
 
 import numpy as np
+
 from pakdocling.models import DocumentType
 from pakdocling.ocr import MockOCREngine
 from pakdocling.pipeline import DocumentPipeline, extract_document
 
 
 def test_pipeline_cnic_extraction() -> None:
-    mock_text = "PAKISTAN NATIONAL IDENTITY CARD\nName: Ali Raza\nCNIC: 35202-1234567-1\nDate of Birth: 01.01.1990"
+    mock_text = (
+        "PAKISTAN NATIONAL IDENTITY CARD\n"
+        "Name: Ali Raza\n"
+        "CNIC: 35202-1234567-1\n"
+        "Date of Birth: 01.01.1990"
+    )
     mock_ocr = MockOCREngine(mock_text=mock_text)
 
     pipeline = DocumentPipeline(ocr_engine=mock_ocr)

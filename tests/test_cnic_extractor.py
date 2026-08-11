@@ -1,7 +1,7 @@
 """Unit tests for CNIC Extractor."""
 
 from pakdocling.extractors.cnic import CNICExtractor
-from pakdocling.models.schema import CNICVariant, Gender
+from pakdocling.models.schema import Gender
 
 
 def test_cnic_extractor_male_new_blue() -> None:

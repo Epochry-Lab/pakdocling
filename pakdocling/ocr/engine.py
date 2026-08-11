@@ -1,8 +1,9 @@
 """OCR Engine interface and implementations for EasyOCR and Mock engines."""
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Union
+
 import numpy as np
 
 
@@ -19,9 +20,7 @@ class BaseOCREngine(ABC):
     """Abstract base interface for OCR engines."""
 
     @abstractmethod
-    def extract_text(
-        self, image: Union[str, bytes, np.ndarray]
-    ) -> tuple[list[OCRResultItem], str]:
+    def extract_text(self, image: Union[str, bytes, np.ndarray]) -> tuple[list[OCRResultItem], str]:
         """Perform OCR extraction on input image.
 
         Returns:
@@ -50,9 +49,7 @@ class EasyOCREngine(BaseOCREngine):
                 ) from e
         return self._reader
 
-    def extract_text(
-        self, image: Union[str, bytes, np.ndarray]
-    ) -> tuple[list[OCRResultItem], str]:
+    def extract_text(self, image: Union[str, bytes, np.ndarray]) -> tuple[list[OCRResultItem], str]:
         from pakdocling.preprocessing.image import ImagePreprocessor
 
         preprocessed = ImagePreprocessor.load_image(image)
@@ -101,9 +98,7 @@ class MockOCREngine(BaseOCREngine):
         if mock_text is not None:
             self.mock_text = mock_text
 
-    def extract_text(
-        self, image: Union[str, bytes, np.ndarray]
-    ) -> tuple[list[OCRResultItem], str]:
+    def extract_text(self, image: Union[str, bytes, np.ndarray]) -> tuple[list[OCRResultItem], str]:
         if self.mock_text and not self.mock_items:
             lines = [line.strip() for line in self.mock_text.splitlines() if line.strip()]
             items = [OCRResultItem(text=line, confidence=0.99) for line in lines]

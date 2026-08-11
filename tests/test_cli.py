@@ -1,6 +1,7 @@
 """Unit tests for Typer CLI commands."""
 
 from typer.testing import CliRunner
+
 from pakdocling.cli import app
 
 runner = CliRunner()

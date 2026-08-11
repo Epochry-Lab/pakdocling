@@ -2,8 +2,9 @@
 
 import time
 from typing import Union
-from PIL import Image
+
 import numpy as np
+from PIL import Image
 
 from pakdocling.extractors.base import BaseExtractor
 from pakdocling.extractors.cnic import CNICExtractor
@@ -14,9 +15,6 @@ from pakdocling.models.schema import (
     CNICData,
     DocumentType,
     ExtractionResult,
-    IntermediateCertificateData,
-    MatricCertificateData,
-    UniversityDegreeData,
 )
 from pakdocling.ocr.engine import BaseOCREngine, EasyOCREngine
 from pakdocling.preprocessing.image import ImagePreprocessor

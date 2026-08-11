@@ -2,6 +2,7 @@
 
 import re
 from typing import Union
+
 from pakdocling.extractors.base import BaseExtractor
 from pakdocling.models.schema import MatricCertificateData
 from pakdocling.ocr.engine import OCRResultItem
@@ -20,9 +21,7 @@ class MatricExtractor(BaseExtractor):
         r"\b(?:marks\s*obtained|obtained\s*marks|marks)[.:\s]*(\d{3,4})\b", re.IGNORECASE
     )
     TOTAL_REGEX = re.compile(r"\b(?:out\s*of|total\s*marks|total)[.:\s]*(\d{3,4})\b", re.IGNORECASE)
-    GRADE_REGEX = re.compile(
-        r"\b(?:grade|division)[.:\s]*([a-fA-F]\+?|1st|2nd|3rd)", re.IGNORECASE
-    )
+    GRADE_REGEX = re.compile(r"\b(?:grade|division)[.:\s]*([a-fA-F]\+?|1st|2nd|3rd)", re.IGNORECASE)
 
     BOARDS = [
         "BISE Lahore",
@@ -80,12 +79,16 @@ class MatricExtractor(BaseExtractor):
             clean = line.strip()
             lower = clean.lower()
 
-            if any(kw in lower for kw in ["certified that", "student name", "candidate name", "name:"]):
+            if any(
+                kw in lower for kw in ["certified that", "student name", "candidate name", "name:"]
+            ):
                 parts = clean.split(":", 1)
                 val = parts[1].strip() if len(parts) > 1 else ""
                 if not val and i + 1 < len(lines):
                     val = lines[i + 1].strip()
-                val = re.sub(r"^(certified that|mr\.|ms\.|miss|syed|syeda)\s+", "", val, flags=re.IGNORECASE).strip()
+                val = re.sub(
+                    r"^(certified that|mr\.|ms\.|miss|syed|syeda)\s+", "", val, flags=re.IGNORECASE
+                ).strip()
                 if val and not student_name:
                     student_name = val
 
@@ -94,7 +97,9 @@ class MatricExtractor(BaseExtractor):
                 val = parts[1].strip() if len(parts) > 1 else ""
                 if not val and i + 1 < len(lines):
                     val = lines[i + 1].strip()
-                val = re.sub(r"^(son of|daughter of|s/o|d/o|mr\.)\s+", "", val, flags=re.IGNORECASE).strip()
+                val = re.sub(
+                    r"^(son of|daughter of|s/o|d/o|mr\.)\s+", "", val, flags=re.IGNORECASE
+                ).strip()
                 if val and not father_name:
                     father_name = val
 
@@ -111,7 +116,11 @@ class MatricExtractor(BaseExtractor):
         return None
 
     def extract(self, items: list[OCRResultItem], raw_text: str) -> MatricCertificateData:
-        lines = [item.text for item in items] if items else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        lines = (
+            [item.text for item in items]
+            if items
+            else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        )
 
         board = self._extract_board(raw_text)
         student_name, father_name = self._extract_names(lines)

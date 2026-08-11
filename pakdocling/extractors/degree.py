@@ -2,6 +2,7 @@
 
 import re
 from typing import Union
+
 from pakdocling.extractors.base import BaseExtractor
 from pakdocling.models.schema import UniversityDegreeData
 from pakdocling.ocr.engine import OCRResultItem
@@ -13,9 +14,7 @@ class DegreeExtractor(BaseExtractor):
     CGPA_REGEX = re.compile(
         r"\b(?:cgpa|gpa|cumulativ[e\s]+gpa)[.:\s]*([0-3]\.\d{1,2}|4\.00?)\b", re.IGNORECASE
     )
-    CGPA_FRACTION_REGEX = re.compile(
-        r"\b([0-3]\.\d{1,2}|4\.00?)\s*[/]\s*(4\.00?|5\.00?)\b"
-    )
+    CGPA_FRACTION_REGEX = re.compile(r"\b([0-3]\.\d{1,2}|4\.00?)\s*[/]\s*(4\.00?|5\.00?)\b")
     REG_REGEX = re.compile(
         r"\b(?:registration|reg|roll)\s*(?:no|num|#)?[.:\s]*([a-zA-Z0-9/\-]+)\b", re.IGNORECASE
     )
@@ -32,7 +31,11 @@ class DegreeExtractor(BaseExtractor):
             if m:
                 full_title = m.group(1).strip()
                 # Stop if title captured trailing keywords
-                full_title = re.split(r"\s+(graduation|year|cgpa|date|roll|reg|marks)\b", full_title, flags=re.IGNORECASE)[0].strip()
+                full_title = re.split(
+                    r"\s+(graduation|year|cgpa|date|roll|reg|marks)\b",
+                    full_title,
+                    flags=re.IGNORECASE,
+                )[0].strip()
                 major: Union[str, None] = None
                 if " in " in full_title.lower():
                     parts = re.split(r"\s+in\s+", full_title, flags=re.IGNORECASE)
@@ -92,7 +95,9 @@ class DegreeExtractor(BaseExtractor):
             if uni.lower() in text.lower():
                 return uni
 
-        m = re.search(r"\b(university\s+of\s+[a-zA-Z\s]+|institute\s+of\s+[a-zA-Z\s]+)\b", text, re.IGNORECASE)
+        m = re.search(
+            r"\b(university\s+of\s+[a-zA-Z\s]+|institute\s+of\s+[a-zA-Z\s]+)\b", text, re.IGNORECASE
+        )
         if m:
             return m.group(1).strip()
         return None
@@ -105,12 +110,19 @@ class DegreeExtractor(BaseExtractor):
             clean = line.strip()
             lower = clean.lower()
 
-            if any(kw in lower for kw in ["conferred upon", "awarded to", "certified that", "name:"]):
+            if any(
+                kw in lower for kw in ["conferred upon", "awarded to", "certified that", "name:"]
+            ):
                 parts = clean.split(":", 1)
                 val = parts[1].strip() if len(parts) > 1 else ""
                 if not val and i + 1 < len(lines):
                     val = lines[i + 1].strip()
-                val = re.sub(r"^(conferred upon|awarded to|certified that|mr\.|ms\.|miss)\s+", "", val, flags=re.IGNORECASE).strip()
+                val = re.sub(
+                    r"^(conferred upon|awarded to|certified that|mr\.|ms\.|miss)\s+",
+                    "",
+                    val,
+                    flags=re.IGNORECASE,
+                ).strip()
                 if val and not student_name:
                     student_name = val
 
@@ -119,7 +131,9 @@ class DegreeExtractor(BaseExtractor):
                 val = parts[1].strip() if len(parts) > 1 else ""
                 if not val and i + 1 < len(lines):
                     val = lines[i + 1].strip()
-                val = re.sub(r"^(son of|daughter of|s/o|d/o|mr\.)\s+", "", val, flags=re.IGNORECASE).strip()
+                val = re.sub(
+                    r"^(son of|daughter of|s/o|d/o|mr\.)\s+", "", val, flags=re.IGNORECASE
+                ).strip()
                 if val and not father_name:
                     father_name = val
 
@@ -137,7 +151,11 @@ class DegreeExtractor(BaseExtractor):
         return None, 4.0
 
     def extract(self, items: list[OCRResultItem], raw_text: str) -> UniversityDegreeData:
-        lines = [item.text for item in items] if items else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        lines = (
+            [item.text for item in items]
+            if items
+            else [line.strip() for line in raw_text.splitlines() if line.strip()]
+        )
 
         uni_name = self._extract_university(raw_text)
         student_name, father_name = self._extract_names(lines)

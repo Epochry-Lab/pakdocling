@@ -79,18 +79,20 @@ print(result.model_dump_json(indent=2))
 ```python
 from pakdocling import DocumentPipeline, MockOCREngine
 
-mock_ocr = MockOCREngine(mock_text="""
+mock_ocr = MockOCREngine(
+    mock_text="""
 NATIONAL UNIVERSITY OF SCIENCES AND TECHNOLOGY (NUST)
 Certified that Zainab Shah Registration No NUST-2019-BSCS-0042
 is awarded Bachelor of Science in Software Engineering
 CGPA: 3.85 / 4.00
 Graduation Year: 2023
-""")
+"""
+)
 
 pipeline = DocumentPipeline(ocr_engine=mock_ocr)
 result = pipeline.extract("dummy.png", doc_type="degree")
 print(result.data.degree_title)  # "Bachelor of Science in Software Engineering"
-print(result.data.cgpa)          # 3.85
+print(result.data.cgpa)  # 3.85
 ```
 
 ---
