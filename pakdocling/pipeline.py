@@ -13,16 +13,16 @@ from pakdocling.extractors.intermediate import IntermediateExtractor
 from pakdocling.extractors.matric import MatricExtractor
 from pakdocling.models.schema import (
     CNICData,
+    ConversionResult,
     DocumentType,
     ExtractedDocumentData,
-    ExtractionResult,
 )
 from pakdocling.ocr.engine import BaseOCREngine, EasyOCREngine
 from pakdocling.preprocessing.image import ImagePreprocessor
 
 
-class DocumentPipeline:
-    """Unified Document Intelligence Pipeline for Pakistani documents."""
+class DocumentConverter:
+    """Docling-aligned Document Converter for Pakistani documents."""
 
     def __init__(
         self,
@@ -46,21 +46,21 @@ class DocumentPipeline:
                 return doc_type
         return DocumentType.CNIC  # Default fallback if unknown
 
-    def extract(
+    def convert(
         self,
-        image_source: Union[str, bytes, np.ndarray, Image.Image],
+        source: Union[str, bytes, np.ndarray, Image.Image],
         doc_type: Union[DocumentType, str] = DocumentType.AUTO,
         do_preprocess: bool = True,
-    ) -> ExtractionResult:
-        """Extract structured JSON fields from document image.
+    ) -> ConversionResult:
+        """Convert document image into a structured ConversionResult (Docling-aligned format).
 
         Args:
-            image_source: Image file path, raw bytes, OpenCV ndarray, or PIL Image.
+            source: Image file path, raw bytes, OpenCV ndarray, or PIL Image.
             doc_type: Document type ('cnic', 'matric', 'intermediate', 'degree', or 'auto').
             do_preprocess: Apply OpenCV deskewing and contrast enhancement prior to OCR.
 
         Returns:
-            ExtractionResult object containing structured data model and metadata.
+            ConversionResult object containing structured data model and metadata.
         """
         start_time = time.time()
         errors: list[str] = []
@@ -68,10 +68,10 @@ class DocumentPipeline:
         try:
             # Preprocess image
             if do_preprocess:
-                prep_result = self.preprocessor.preprocess(image_source)
+                prep_result = self.preprocessor.preprocess(source)
                 target_image = prep_result["processed_gray"]
             else:
-                target_image = self.preprocessor.load_image(image_source)
+                target_image = self.preprocessor.load_image(source)
 
             # Perform OCR
             ocr_items, raw_text = self.ocr_engine.extract_text(target_image)
@@ -90,7 +90,7 @@ class DocumentPipeline:
 
             processing_time = round((time.time() - start_time) * 1000.0, 2)
 
-            return ExtractionResult(
+            return ConversionResult(
                 document_type=target_doc_type,
                 success=True,
                 data=extracted_data,
@@ -101,7 +101,7 @@ class DocumentPipeline:
         except Exception as e:
             processing_time = round((time.time() - start_time) * 1000.0, 2)
             errors.append(str(e))
-            return ExtractionResult(
+            return ConversionResult(
                 document_type=DocumentType.AUTO,
                 success=False,
                 data=CNICData(),
@@ -109,12 +109,26 @@ class DocumentPipeline:
                 processing_time_ms=processing_time,
             )
 
+    def extract(
+        self,
+        image_source: Union[str, bytes, np.ndarray, Image.Image],
+        doc_type: Union[DocumentType, str] = DocumentType.AUTO,
+        do_preprocess: bool = True,
+    ) -> ConversionResult:
+        """Alias for convert() method."""
+        return self.convert(source=image_source, doc_type=doc_type, do_preprocess=do_preprocess)
 
-def extract_document(
-    image_source: Union[str, bytes, np.ndarray, Image.Image],
+
+def convert(
+    source: Union[str, bytes, np.ndarray, Image.Image],
     doc_type: Union[DocumentType, str] = DocumentType.AUTO,
     ocr_engine: Union[BaseOCREngine, None] = None,
-) -> ExtractionResult:
-    """Convenience functional interface for pakdocling extraction."""
-    pipeline = DocumentPipeline(ocr_engine=ocr_engine)
-    return pipeline.extract(image_source=image_source, doc_type=doc_type)
+) -> ConversionResult:
+    """Convenience Docling-aligned functional interface for document conversion."""
+    converter = DocumentConverter(ocr_engine=ocr_engine)
+    return converter.convert(source=source, doc_type=doc_type)
+
+
+# Backward compatibility aliases
+DocumentPipeline = DocumentConverter
+extract_document = convert

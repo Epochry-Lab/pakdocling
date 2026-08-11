@@ -42,42 +42,48 @@ pip install -e ".[dev]"
 
 ---
 
-## 💻 Python API Usage
+## 💻 Python API Usage (Docling-Aligned)
 
-### 1. Extracting Data from a CNIC Image
+### 1. Converting a Document Image with `DocumentConverter`
 
 ```python
-from pakdocling import extract_document
+from pakdocling import DocumentConverter
 
-# Auto-detect or specify doc_type='cnic'
-result = extract_document("path/to/cnic_card.jpg", doc_type="cnic")
+# Initialize converter
+converter = DocumentConverter()
+
+# Convert CNIC or educational document image
+result = converter.convert("path/to/cnic_card.jpg", doc_type="cnic")
 
 if result.success:
-    cnic = result.data
+    cnic = result.document  # Pydantic model (CNICData)
     print(f"CNIC Number: {cnic.cnic_number}")
     print(f"Name: {cnic.full_name}")
     print(f"Father Name: {cnic.father_name}")
     print(f"Gender: {cnic.gender}")
     print(f"Date of Birth: {cnic.date_of_birth}")
     print(f"Card Variant: {cnic.variant}")
+
+# Docling-style export methods
+json_output = result.export_to_json(indent=2)
+dict_output = result.export_to_dict()
 ```
 
-### 2. Outputting Validated JSON
+### 2. Functional Conversion Helper `convert()`
 
 ```python
-from pakdocling import DocumentPipeline, DocumentType
+from pakdocling import convert, DocumentType
 
-pipeline = DocumentPipeline()
-result = pipeline.extract("matric_certificate.png", doc_type=DocumentType.MATRIC)
+result = convert("matric_certificate.png", doc_type=DocumentType.MATRIC)
 
-# Export Pydantic model to JSON
-print(result.model_dump_json(indent=2))
+# Export conversion result directly to formatted JSON
+print(result.export_to_json(indent=2))
 ```
 
 ### 3. Offline & Fast Testing with `MockOCREngine`
 
 ```python
-from pakdocling import DocumentPipeline, MockOCREngine
+from pakdocling import DocumentConverter, MockOCREngine
 
 mock_ocr = MockOCREngine(
     mock_text="""
@@ -89,10 +95,11 @@ Graduation Year: 2023
 """
 )
 
-pipeline = DocumentPipeline(ocr_engine=mock_ocr)
-result = pipeline.extract("dummy.png", doc_type="degree")
-print(result.data.degree_title)  # "Bachelor of Science in Software Engineering"
-print(result.data.cgpa)  # 3.85
+converter = DocumentConverter(ocr_engine=mock_ocr)
+result = converter.convert("dummy.png", doc_type="degree")
+
+print(result.document.degree_title)  # "Bachelor of Science in Software Engineering"
+print(result.document.cgpa)  # 3.85
 ```
 
 ---
@@ -105,11 +112,11 @@ print(result.data.cgpa)  # 3.85
 # Check version & supported document schemas
 pakdocling info
 
-# Extract data from an image file and print formatted JSON
-pakdocling extract sample_cnic.jpg --doc-type cnic
+# Convert document image and print formatted JSON (Docling API)
+pakdocling convert sample_cnic.jpg --doc-type cnic
 
-# Extract and save JSON to a file
-pakdocling extract degree_transcript.png --doc-type auto -o output.json
+# Convert and save JSON output to file
+pakdocling convert degree_transcript.png --doc-type auto -o output.json
 ```
 
 ---

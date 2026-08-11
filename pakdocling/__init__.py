@@ -10,7 +10,9 @@ from pakdocling.extractors import (
 from pakdocling.models import (
     CNICData,
     CNICVariant,
+    ConversionResult,
     DocumentType,
+    ExtractedDocumentData,
     ExtractionResult,
     Gender,
     IntermediateCertificateData,
@@ -18,13 +20,16 @@ from pakdocling.models import (
     UniversityDegreeData,
 )
 from pakdocling.ocr import BaseOCREngine, EasyOCREngine, MockOCREngine, OCRResultItem
-from pakdocling.pipeline import DocumentPipeline, extract_document
+from pakdocling.pipeline import DocumentConverter, DocumentPipeline, convert, extract_document
 from pakdocling.preprocessing import ImagePreprocessor
 
 __version__ = "0.0.1"
 
 __all__ = [
     "__version__",
+    "DocumentConverter",
+    "ConversionResult",
+    "convert",
     "DocumentType",
     "CNICVariant",
     "Gender",
@@ -32,6 +37,7 @@ __all__ = [
     "MatricCertificateData",
     "IntermediateCertificateData",
     "UniversityDegreeData",
+    "ExtractedDocumentData",
     "ExtractionResult",
     "BaseExtractor",
     "CNICExtractor",

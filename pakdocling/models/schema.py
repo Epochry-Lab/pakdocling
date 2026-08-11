@@ -177,8 +177,8 @@ ExtractedDocumentData = Union[
 ]
 
 
-class ExtractionResult(BaseModel):
-    """Wrapper result for all extraction pipelines."""
+class ConversionResult(BaseModel):
+    """Wrapper result for all pakdocling conversions (Docling-aligned format)."""
 
     document_type: DocumentType = Field(description="Identified document type")
     success: bool = Field(description="Indicates whether extraction succeeded")
@@ -188,8 +188,33 @@ class ExtractionResult(BaseModel):
         IntermediateCertificateData,
         UniversityDegreeData,
         dict[str, Any],
-    ] = Field(description="Extracted structured data model or dictionary")
+    ] = Field(description="Extracted structured document model or dictionary")
     errors: list[str] = Field(
         default_factory=list, description="List of warnings or extraction errors"
     )
     processing_time_ms: float = Field(default=0.0, description="Processing time in milliseconds")
+
+    @property
+    def document(
+        self,
+    ) -> Union[
+        CNICData,
+        MatricCertificateData,
+        IntermediateCertificateData,
+        UniversityDegreeData,
+        dict[str, Any],
+    ]:
+        """Alias property matching Docling's .document attribute access."""
+        return self.data
+
+    def export_to_json(self, indent: Union[int, None] = None) -> str:
+        """Export conversion result to JSON string (Docling format)."""
+        return self.model_dump_json(indent=indent)
+
+    def export_to_dict(self) -> dict[str, Any]:
+        """Export conversion result to Python dictionary (Docling format)."""
+        return self.model_dump()
+
+
+# Backward compatibility alias
+ExtractionResult = ConversionResult

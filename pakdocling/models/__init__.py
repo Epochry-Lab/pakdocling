@@ -3,6 +3,7 @@
 from pakdocling.models.schema import (
     CNICData,
     CNICVariant,
+    ConversionResult,
     DocumentType,
     ExtractedDocumentData,
     ExtractionResult,
@@ -21,5 +22,6 @@ __all__ = [
     "IntermediateCertificateData",
     "UniversityDegreeData",
     "ExtractedDocumentData",
+    "ConversionResult",
     "ExtractionResult",
 ]
