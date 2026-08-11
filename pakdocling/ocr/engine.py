@@ -40,7 +40,7 @@ class EasyOCREngine(BaseOCREngine):
     def _get_reader(self) -> Any:
         if self._reader is None:
             try:
-                import easyocr  # type: ignore[import-untyped]
+                import easyocr  # type: ignore[import-untyped,import-not-found]
 
                 self._reader = easyocr.Reader(self.languages, gpu=self.gpu)
             except ImportError as e:

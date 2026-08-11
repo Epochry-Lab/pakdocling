@@ -65,8 +65,12 @@ class CNICExtractor(BaseExtractor):
 
         for i, line in enumerate(lines):
             line_lower = line.lower()
-            m = self.DATE_REGEX.search(line)
-            found_date = f"{m.group(1)}.{m.group(2)}.{m.group(3)}" if m else None
+            search_match = self.DATE_REGEX.search(line)
+            found_date = (
+                f"{search_match.group(1)}.{search_match.group(2)}.{search_match.group(3)}"
+                if search_match
+                else None
+            )
 
             if "birth" in line_lower or "dob" in line_lower:
                 if found_date:

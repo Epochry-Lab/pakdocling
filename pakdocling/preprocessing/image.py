@@ -5,7 +5,7 @@ from typing import Any, Union
 
 import cv2
 import numpy as np
-from PIL import Image
+from PIL import Image  # type: ignore[import-untyped]
 
 
 class ImagePreprocessor:

@@ -1,10 +1,10 @@
 """Document Intelligence Pipeline orchestrator."""
 
 import time
-from typing import Union
+from typing import Union, cast
 
 import numpy as np
-from PIL import Image
+from PIL import Image  # type: ignore[import-untyped]
 
 from pakdocling.extractors.base import BaseExtractor
 from pakdocling.extractors.cnic import CNICExtractor
@@ -14,6 +14,7 @@ from pakdocling.extractors.matric import MatricExtractor
 from pakdocling.models.schema import (
     CNICData,
     DocumentType,
+    ExtractedDocumentData,
     ExtractionResult,
 )
 from pakdocling.ocr.engine import BaseOCREngine, EasyOCREngine
@@ -85,7 +86,7 @@ class DocumentPipeline:
                 target_doc_type = self.detect_document_type(raw_text)
 
             extractor = self.extractors.get(target_doc_type, CNICExtractor())
-            extracted_data = extractor.extract(ocr_items, raw_text)
+            extracted_data = cast(ExtractedDocumentData, extractor.extract(ocr_items, raw_text))
 
             processing_time = round((time.time() - start_time) * 1000.0, 2)
 
