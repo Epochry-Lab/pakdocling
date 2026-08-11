@@ -32,9 +32,15 @@ class BaseOCREngine(ABC):
 class EasyOCREngine(BaseOCREngine):
     """EasyOCR implementation with lazy loading to defer PyTorch/EasyOCR initialization."""
 
-    def __init__(self, languages: Union[list[str], None] = None, gpu: bool = False) -> None:
-        self.languages = languages or ["en"]
+    def __init__(
+        self,
+        languages: Union[list[str], None] = None,
+        gpu: bool = False,
+        min_confidence: float = 0.2,
+    ) -> None:
+        self.languages = languages or ["ur", "en"]
         self.gpu = gpu
+        self.min_confidence = min_confidence
         self._reader: Any = None
 
     def _get_reader(self) -> Any:
@@ -63,12 +69,13 @@ class EasyOCREngine(BaseOCREngine):
 
         for bbox, text, prob in raw_results:
             cleaned_text = str(text).strip()
-            if cleaned_text:
+            confidence = float(prob)
+            if cleaned_text and confidence >= self.min_confidence:
                 items.append(
                     OCRResultItem(
                         text=cleaned_text,
                         bbox=[[float(pt[0]), float(pt[1])] for pt in bbox],
-                        confidence=float(prob),
+                        confidence=confidence,
                     )
                 )
                 text_lines.append(cleaned_text)

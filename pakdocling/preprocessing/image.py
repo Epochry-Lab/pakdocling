@@ -56,11 +56,30 @@ class ImagePreprocessor:
         return clahe.apply(gray_img)
 
     @staticmethod
-    def denoise(gray_img: np.ndarray, kernel_size: int = 3) -> np.ndarray:
-        """Denoise grayscale image using Gaussian blur."""
-        if kernel_size % 2 == 0:
-            kernel_size += 1
+    def denoise(gray_img: np.ndarray, h: float = 10.0, method: str = "fast_nl_means") -> np.ndarray:
+        """Denoise grayscale image while preserving edges (fastNlMeansDenoising / GaussianBlur)."""
+        if method == "fast_nl_means":
+            return cv2.fastNlMeansDenoising(gray_img, h=int(h))
+        kernel_size = int(h) if int(h) % 2 != 0 else int(h) + 1
         return cv2.GaussianBlur(gray_img, (kernel_size, kernel_size), 0)
+
+    @staticmethod
+    def annotate_boxes(
+        img: np.ndarray,
+        ocr_items: list[Any],
+        color: tuple[int, int, int] = (0, 255, 0),
+        thickness: int = 2,
+    ) -> np.ndarray:
+        """Draw green bounding box rectangles around detected text regions."""
+        annotated = img.copy()
+        for item in ocr_items:
+            bbox = getattr(item, "bbox", None)
+            conf = getattr(item, "confidence", 1.0)
+            if bbox and len(bbox) >= 4 and conf >= 0.2:
+                tl = (int(bbox[0][0]), int(bbox[0][1]))
+                br = (int(bbox[2][0]), int(bbox[2][1]))
+                cv2.rectangle(annotated, tl, br, color, thickness)
+        return annotated
 
     @staticmethod
     def adaptive_threshold(gray_img: np.ndarray) -> np.ndarray:
